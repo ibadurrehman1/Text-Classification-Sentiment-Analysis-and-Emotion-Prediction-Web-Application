@@ -4,3 +4,5 @@ plotly==5.15.0
 st_star_rating==0.0.5
 streamlit==1.25.0
 transformers==4.31.0
+tensorflow
+torch

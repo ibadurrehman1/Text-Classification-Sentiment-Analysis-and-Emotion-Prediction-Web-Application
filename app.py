@@ -20,7 +20,7 @@ def star_review():
   return star
 st.cache_resource()
 def emotion_detection():
-  emotion=pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base", return_all_scores=True)
+  emotion=pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base", top_k=5)
   return emotion
 
 def figure(emotion):

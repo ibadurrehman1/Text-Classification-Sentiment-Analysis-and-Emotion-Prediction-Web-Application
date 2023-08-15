@@ -100,7 +100,7 @@ if prompt := st.chat_input("Write a Sentence"):
     star_data=star(prompt)
     
     # Extract the label (star rating) with the highest score
-    star_value = star_data[0]['label'][0]
+    star_value = int(star_data[0]['label'][0])
 
     
    

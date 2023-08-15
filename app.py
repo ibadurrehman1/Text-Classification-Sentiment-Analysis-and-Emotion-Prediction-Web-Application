@@ -27,9 +27,9 @@ def figure(emotion):
     emotions_dict = emotion[0]
     emotion_labels = [item['label'] for item in emotions_dict]
     emotion_scores = [item['score'] for item in emotions_dict]
-    other_emotion_score = sum(score for score in emotion_scores if score < 0.1)
-    emotion_labels = [label if score >= 0.1 else 'Other' for label, score in zip(emotion_labels, emotion_scores)]
-    emotion_scores = [score if score >= 0.1 else other_emotion_score for score in emotion_scores]
+    other_emotion_score = sum(score for score in emotion_scores if score < 0.05)
+    emotion_labels = [label if score >= 0.05 else 'Other' for label, score in zip(emotion_labels, emotion_scores)]
+    emotion_scores = [score if score >= 0.05 else other_emotion_score for score in emotion_scores]
     df = pd.DataFrame({'emotion': emotion_labels, 'score': emotion_scores})
     df=df.drop_duplicates()
     return df
@@ -91,45 +91,46 @@ for message in st.session_state.messages:
 if prompt := st.chat_input("Write a Sentence"):
     # Display user message in chat message container
     st.chat_message("user").markdown(prompt)
-    # Add user message to chat history
-    st.session_state.messages.append({"role": "user", "content": prompt})
-
-    
-    star = star_review()
-
-    star_data=star(prompt)
-    
-    # Extract the label (star rating) with the highest score
-    star_value = int(star_data[0]['label'][0])
-
-    
-   
-    p_n_review = positive_negative()
-    p_n_classify=p_n_review(prompt) 
-
-    if p_n_classify[0]['label'] == 'NEGATIVE':
-        negative = "{:.2f}%".format(p_n_classify[0]['score'] * 100)
-        positive = "{:.2f}%".format((1 - p_n_classify[0]['score']) * 100)
-    elif p_n_classify[0]['label'] == 'POSITIVE':
-        positive = "{:.2f}%".format(p_n_classify[0]['score'] * 100)
-        negative = "{:.2f}%".format((1 - p_n_classify[0]['score']) * 100)
-        
-    emotion_detect=emotion_detection()
-    emotion=emotion_detect(prompt)
-    
-
+      # Add user message to chat history
+    with st.spinner('Processing...'):
+      st.session_state.messages.append({"role": "user", "content": prompt})
   
-    # Generate a random chart data (you can replace this with your own chart creation code)
-    df = figure(emotion)
-    
-
-    # Display assistant response in chat message container
-    with st.chat_message("assistant"):
-        assistant_template(star_value,positive,negative,df)
+      
+      star = star_review()
   
-    star_key+=1
-    # Add assistant response and chart data to chat history
-    st.session_state.messages.append({"role": "assistant", "star": star_value, "chart_data": df,"negative":negative,"positive":positive})
-
+      star_data=star(prompt)
+      
+      # Extract the label (star rating) with the highest score
+      star_value = int(star_data[0]['label'][0])
+  
+      
+     
+      p_n_review = positive_negative()
+      p_n_classify=p_n_review(prompt) 
+  
+      if p_n_classify[0]['label'] == 'NEGATIVE':
+          negative = "{:.2f}%".format(p_n_classify[0]['score'] * 100)
+          positive = "{:.2f}%".format((1 - p_n_classify[0]['score']) * 100)
+      elif p_n_classify[0]['label'] == 'POSITIVE':
+          positive = "{:.2f}%".format(p_n_classify[0]['score'] * 100)
+          negative = "{:.2f}%".format((1 - p_n_classify[0]['score']) * 100)
+          
+      emotion_detect=emotion_detection()
+      emotion=emotion_detect(prompt)
+      
+  
     
-
+      # Generate a random chart data (you can replace this with your own chart creation code)
+      df = figure(emotion)
+      
+  
+      # Display assistant response in chat message container
+      with st.chat_message("assistant"):
+          assistant_template(star_value,positive,negative,df)
+    
+      star_key+=1
+      # Add assistant response and chart data to chat history
+      st.session_state.messages.append({"role": "assistant", "star": star_value, "chart_data": df,"negative":negative,"positive":positive})
+  
+      
+  
